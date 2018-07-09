@@ -70,6 +70,121 @@ func (h *Handler) ComQuery(
 	query string,
 	callback func(*sqltypes.Result) error,
 ) error {
+	println(query)
+	if query == "/* mysql-connector-java-8.0.11 (Revision: 6d4eaa273bc181b4cf1c8ad0821a2227f116fedf) */SELECT  @@session.auto_increment_increment AS auto_increment_increment, @@character_set_client AS character_set_client, @@character_set_connection AS character_set_connection, @@character_set_results AS character_set_results, @@character_set_server AS character_set_server, @@collation_server AS collation_server, @@init_connect AS init_connect, @@interactive_timeout AS interactive_timeout, @@license AS license, @@lower_case_table_names AS lower_case_table_names, @@max_allowed_packet AS max_allowed_packet, @@net_write_timeout AS net_write_timeout, @@query_cache_size AS query_cache_size, @@query_cache_type AS query_cache_type, @@sql_mode AS sql_mode, @@system_time_zone AS system_time_zone, @@time_zone AS time_zone, @@tx_isolation AS transaction_isolation, @@wait_timeout AS wait_timeout" {
+		schema := sql.Schema{
+			&sql.Column{
+				Name: "auto_increment_increment",
+				Type: sql.Int32,
+			},
+			&sql.Column{
+				Name: "character_set_client",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "character_set_connection",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "character_set_results",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "character_set_server",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "collation_server",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "init_connect",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "interactive_timeout",
+				Type: sql.Int32,
+			},
+			&sql.Column{
+				Name: "license",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "lower_case_table_names",
+				Type: sql.Int32,
+			},
+			&sql.Column{
+				Name: "max_allowed_packet",
+				Type: sql.Int32,
+			},
+			&sql.Column{
+				Name: "net_write_timeout",
+				Type: sql.Int32,
+			},
+			&sql.Column{
+				Name: "query_cache_size",
+				Type: sql.Int32,
+			},
+			&sql.Column{
+				Name: "query_cache_type",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "sql_mode",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "system_time_zone",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "time_zone",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "transaction_isolation",
+				Type: sql.Text,
+			},
+			&sql.Column{
+				Name: "wait_timeout",
+				Type: sql.Int32,
+			},
+		}
+		r := &sqltypes.Result{Fields: schemaToFields(schema)}
+		r.Rows = append(r.Rows, rowToSQL(schema, sql.NewRow(
+			1,
+			"utf8",
+			"utf8",
+			"utf8",
+			"latin1",
+			"latin1_swedish_ci",
+			"",
+			28800,
+			"GPL",
+			0,
+			419430400,
+			60,
+			1048576,
+			"OFF",
+			"ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION",
+			"UTC",
+			"SYSTEM",
+			"REPEATABLE-READ",
+			28800)))
+		r.RowsAffected++
+		callback(r)
+
+		return nil
+
+	}
+	if query == "SET character_set_results = NULL" ||
+		query == "SET autocommit=1" {
+		println("ENTERING", query)
+		r := &sqltypes.Result{}
+		callback(r)
+		return nil
+	}
+
 	ctx, done, err := h.sm.NewContext(c)
 	if err != nil {
 		return err
