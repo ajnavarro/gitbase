@@ -20,6 +20,12 @@
   version = "v1.3.1"
 
 [[projects]]
+  name = "github.com/cespare/xxhash"
+  packages = ["."]
+  revision = "5c37fe3735342a2e0d01c87a907579987c8936cc"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/codahale/hdrhistogram"
   packages = ["."]
@@ -142,6 +148,18 @@
   version = "v0.9.0"
 
 [[projects]]
+  name = "github.com/pilosa/pilosa"
+  packages = [
+    ".",
+    "internal",
+    "lru",
+    "pql",
+    "roaring"
+  ]
+  revision = "5f0ef7efca2285c1a0c6e9ef2c6bce94f38ec1ea"
+  version = "v1.0.2"
+
+[[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
@@ -156,7 +174,8 @@
 [[projects]]
   name = "github.com/satori/go.uuid"
   packages = ["."]
-  revision = "36e9d2ebbde5e3f13ab2e25625fd453271d6522e"
+  revision = "f58768cc1a7a7e77a3bd49e98cdd21419399b6a3"
+  version = "v1.2.0"
 
 [[projects]]
   name = "github.com/sergi/go-diff"
@@ -476,10 +495,11 @@
     "sql/expression/function/aggregation",
     "sql/index",
     "sql/index/pilosa",
+    "sql/index/pilosalib",
     "sql/parse",
     "sql/plan"
   ]
-  revision = "44e416bff2e89a515172814e3f688afe5d875deb"
+  revision = "f813628f2d89f5d6d60e4d847addc89cf6fe7d98"
 
 [[projects]]
   name = "gopkg.in/src-d/go-siva.v1"
@@ -532,6 +552,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "7b7620264fd1ab1e8c08759b930b0f3cb478eb410b28d740de6fb32b2283d8cd"
+  inputs-digest = "035e478c03caa9b004481b3d2a4f1f2c1ab2231c9fbd215816fd4695b1997403"
   solver-name = "gps-cdcl"
   solver-version = 1

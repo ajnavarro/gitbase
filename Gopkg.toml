@@ -1,6 +1,6 @@
 [[constraint]]
   name = "gopkg.in/src-d/go-mysql-server.v0"
-  revision = "44e416bff2e89a515172814e3f688afe5d875deb"
+  revision = "f813628f2d89f5d6d60e4d847addc89cf6fe7d98"
 
 [[constraint]]
   name = "github.com/jessevdk/go-flags"
@@ -41,7 +41,7 @@
 
 [[override]]
   name = "github.com/satori/go.uuid"
-  revision = "36e9d2ebbde5e3f13ab2e25625fd453271d6522e"
+  version = "1.2.0"
 
 [[constraint]]
   name = "gopkg.in/src-d/enry.v1"
