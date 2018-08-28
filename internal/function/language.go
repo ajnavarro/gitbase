@@ -1,8 +1,13 @@
 package function
 
 import (
+	"crypto/sha1"
+	"encoding/base64"
 	"fmt"
+	"hash"
+	"math"
 
+	lru "github.com/hashicorp/golang-lru"
 	enry "gopkg.in/src-d/enry.v1"
 	"gopkg.in/src-d/go-mysql-server.v0/sql"
 )
@@ -12,22 +17,32 @@ import (
 type Language struct {
 	Left  sql.Expression
 	Right sql.Expression
+
+	cache *lru.Cache
+	h     hash.Hash
 }
 
 // NewLanguage creates a new Language UDF.
-func NewLanguage(args ...sql.Expression) (sql.Expression, error) {
-	var left, right sql.Expression
-	switch len(args) {
-	case 1:
-		left = args[0]
-	case 2:
-		left = args[0]
-		right = args[1]
-	default:
-		return nil, sql.ErrInvalidArgumentNumber.New("1 or 2", len(args))
+func NewLanguage(cache *lru.Cache) func(...sql.Expression) (sql.Expression, error) {
+	return func(args ...sql.Expression) (sql.Expression, error) {
+		var left, right sql.Expression
+		switch len(args) {
+		case 1:
+			left = args[0]
+		case 2:
+			left = args[0]
+			right = args[1]
+		default:
+			return nil, sql.ErrInvalidArgumentNumber.New("1 or 2", len(args))
+		}
+
+		return &Language{
+			Left:  left,
+			Right: right,
+			cache: cache,
+			h:     sha1.New()}, nil
 	}
 
-	return &Language{left, right}, nil
 }
 
 // Resolved implements the Expression interface.
@@ -67,7 +82,7 @@ func (f *Language) TransformUp(fn sql.TransformExprFunc) (sql.Expression, error)
 		}
 	}
 
-	return fn(&Language{left, right})
+	return fn(&Language{left, right, f.cache, f.h})
 }
 
 // Eval implements the Expression interface.
@@ -110,11 +125,28 @@ func (f *Language) Eval(ctx *sql.Context, row sql.Row) (interface{}, error) {
 		blob = right.([]byte)
 	}
 
-	if lang := enry.GetLanguage(path, blob); lang != "" {
+	var lang interface{}
+	key := f.cacheKey(path, blob)
+	lang, ok := f.cache.Get(key)
+	if !ok {
+		lang = enry.GetLanguage(path, blob)
+		f.cache.Add(key, lang)
+	}
+
+	if lang != "" {
 		return lang, nil
 	}
 
 	return nil, nil
+}
+
+func (f *Language) cacheKey(path string, blob []byte) string {
+	f.h.Reset()
+	f.h.Write([]byte(path))
+	len := int(math.Min(512, float64(len(blob))))
+	f.h.Write(blob[:len])
+
+	return base64.URLEncoding.EncodeToString(f.h.Sum(nil))
 }
 
 // Children implements the Expression interface.
