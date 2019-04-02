@@ -12,4 +12,5 @@ var Functions = sql.Functions{
 	"uast_xpath":    sql.Function2(NewUASTXPath),
 	"uast_extract":  sql.Function2(NewUASTExtract),
 	"uast_children": sql.Function1(NewUASTChildren),
+	"get_tokens":    sql.Function3(NewGetTokens),
 }
